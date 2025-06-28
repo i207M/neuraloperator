@@ -136,7 +136,11 @@ class BaseModel(torch.nn.Module):
                 warnings.warn(f"Attempting to load a {self.__class__} of version {saved_version},"
                               f"But current version of {self.__class__} is {saved_version}")
             # remove state dict metadata at the end to ensure proper loading with PyTorch module
-        return super().load_state_dict(state_dict, strict=strict, assign=assign)
+        try:
+            return super().load_state_dict(state_dict, strict=strict, assign=assign)
+        except TypeError:
+            # Fallback for older PyTorch versions that don't support the assign parameter
+            return super().load_state_dict(state_dict, strict=strict)
 
     def save_checkpoint(self, save_folder, save_name):
         """Saves the model state and init param in the given folder under the given name
