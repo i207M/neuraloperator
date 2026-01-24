@@ -456,17 +456,17 @@ class SpectralConv(BaseSpectralConv):
         if self.complex_data:
             x = torch.fft.ifftn(out_fft, s=mode_sizes, dim=fft_dims, norm=self.fft_norm)
         else:
-            # x = torch.fft.irfftn(out_fft, s=mode_sizes, dim=fft_dims, norm=self.fft_norm)
-            out_fft = torch.fft.ifftn(out_fft, s=mode_sizes[:-1], dim=fft_dims[:-1], norm=self.fft_norm)
+            x = torch.fft.irfftn(out_fft, s=mode_sizes, dim=fft_dims, norm=self.fft_norm)
+            # out_fft = torch.fft.ifftn(out_fft, s=mode_sizes[:-1], dim=fft_dims[:-1], norm=self.fft_norm)
 
-            # Enforce Hermitian symmetry conditions for irfft
-            # 0th frequency must be real
-            out_fft[..., 0].imag.zero_()
-            # Nyquist frequency must be real if the spatial size is even
-            if mode_sizes[-1] % 2 == 0:
-                out_fft[..., -1].imag.zero_()
+            # # Enforce Hermitian symmetry conditions for irfft
+            # # 0th frequency must be real
+            # out_fft[..., 0].imag.zero_()
+            # # Nyquist frequency must be real if the spatial size is even
+            # if mode_sizes[-1] % 2 == 0:
+            #     out_fft[..., -1].imag.zero_()
 
-            x = torch.fft.irfft(out_fft, n=mode_sizes[-1], dim=fft_dims[-1], norm=self.fft_norm)
+            # x = torch.fft.irfft(out_fft, n=mode_sizes[-1], dim=fft_dims[-1], norm=self.fft_norm)
 
         if self.bias is not None:
             x = x + self.bias
